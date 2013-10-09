@@ -1,13 +1,14 @@
 /**
  * 
  */
-package ar.com.gl.paystadistics.domain;
+package ar.com.gl.paystadistics.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import com.sun.istack.internal.NotNull;
+import com.sun.istack.NotNull;
+
 
 /**
  * Simple plain object representation of a credit card item.
@@ -17,8 +18,8 @@ import com.sun.istack.internal.NotNull;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class CreditCardItemDTO {
 
-	@NotNull
-	@Getter
-	private String amount,expirationDate,creditCardName;
+    @NotNull
+    @Getter
+    private String amount,expirationDate,creditCardName;
 
 }

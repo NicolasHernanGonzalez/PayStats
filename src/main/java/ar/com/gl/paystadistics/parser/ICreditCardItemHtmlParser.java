@@ -1,6 +1,6 @@
-package ar.com.gl.paystadistics.services;
+package ar.com.gl.paystadistics.parser;
 
-import ar.com.gl.paystadistics.domain.CreditCardItemDTO;
+import ar.com.gl.paystadistics.dto.CreditCardItemDTO;
 
 public interface ICreditCardItemHtmlParser {
 
@@ -10,6 +10,6 @@ public interface ICreditCardItemHtmlParser {
 	 * @param html Credit card info html format
 	 * @return
 	 */
-	public CreditCardItemDTO paseHTML(String html);  
+	CreditCardItemDTO paseHTML(String html);  
 
 }

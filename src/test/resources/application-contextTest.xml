@@ -28,7 +28,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-					<value>file:///${catalina.home}/paystats_conf/generalConf.properties</value>
+					<value>file:///C:/Users/n.gonzalez/development/apache-tomcat-7.0.42/paystats_conf/generalConf.properties</value>
  			</list>
 		</property>
 	</bean>
@@ -36,9 +36,27 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	<bean id="SantanderRioFactory" class="ar.com.gl.paystadistics.services.SantanderRioItemFactory"/>
 	
 	<util:map id="creditCardsItemFactories" key-type="ar.com.gl.paystadistics.domain.CreditCardEnum" value-type="ar.com.gl.paystadistics.services.ICreditCardItemFactory">
-		<entry key="SANTANDER_RIO" value-ref="SantanderRioFactory"/>
+		<entry key="VISA_SANTANDER_RIO" value-ref="SantanderRioFactory"/>
+		<entry key="AMEX_SANTANDER_RIO" value-ref="SantanderRioFactory"/>
+	</util:map>
+	
+	<bean id="SantanderRioVisa" class="ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO">
+		<constructor-arg index="1" value="${mail.rio.visa.body.key}"/>
+		<constructor-arg  index="0" value="${mail.rio.subjectPattern}"/>
+	</bean>
+	
+	<bean id="SantanderRioAmex" class="ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO">
+		<constructor-arg index="1" value="${mail.rio.amex.body.key}"/>
+		<constructor-arg  index="0" value="${mail.rio.subjectPattern}"/>
+	</bean>
+	
+	<util:map id="creditCardsMailSearchCriteria" key-type="ar.com.gl.paystadistics.domain.CreditCardEnum" value-type="ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO">
+		<entry key="VISA_SANTANDER_RIO" value-ref="SantanderRioVisa"/>
+		<entry key="AMEX_SANTANDER_RIO" value-ref="SantanderRioAmex"/>
 	</util:map>
 	
 	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"/>
+	
+
 		
 </beans>

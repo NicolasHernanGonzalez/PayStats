@@ -2,8 +2,11 @@ package ar.com.gl.paystadistics.services;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -12,6 +15,7 @@ import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.search.AndTerm;
+import javax.mail.search.BodyTerm;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.ReceivedDateTerm;
@@ -26,11 +30,12 @@ import org.springframework.stereotype.Component;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
 import ar.com.gl.paystadistics.domain.CreditCardItem;
+import ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO;
 import ar.com.gl.paystadistics.exceptions.BusinessException;
 
 /**
  * Class responsible for connecting to an email service provider, which is configured 
- * by properties, and retrieving business info 
+ * by properties, and then retrieving all the business info needed 
  * @author n.gonzalez
  *
  */
@@ -51,9 +56,6 @@ public class EmailingService implements IEmailingService {
 
 	@Value("${mail.inboxFolder}")
 	private String mailInboxFolder;
-
-	@Value("${mail.subjectPattern}")
-	private String mailSubjectPattern;
 	
 	@Value("${mail.sinceDeltaDays}")
 	@Getter
@@ -70,12 +72,15 @@ public class EmailingService implements IEmailingService {
 	@Autowired
 	private CreditCardItemFactory cardItemFactory;
 	
+	@Resource
+	private Map<CreditCardEnum,CreditCardMailSearchCriteriaDTO> creditCardsMailSearchCriteria;
+	
 	/**
 	 * Use as default date parameters the last days of the past month, and the first days of the current one.
 	 * @param creditCardKey
 	 * @return
 	 */
-	public CreditCardItem[] retrieveEmaiIinfo(CreditCardEnum creditCardKey) {
+	public Map<CreditCardEnum,CreditCardItem> retrieveEmailLastinfo(CreditCardEnum[] creditCardKeys) {
 		
 		Calendar calendar = getCalendar();
 		
@@ -89,7 +94,7 @@ public class EmailingService implements IEmailingService {
         calendar.set(Calendar.DAY_OF_MONTH,Integer.valueOf(this.getToDeltaDays()));
         Date toDate = calendar.getTime();
 		
-        return retrieveEmaiIinfo(sinceDate, toDate, creditCardKey);
+        return retrieveEmaiIinfo(sinceDate, toDate, creditCardKeys);
 	}
 	
 	/**
@@ -101,62 +106,90 @@ public class EmailingService implements IEmailingService {
 	}
 	
 	
-	public CreditCardItem[] retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum creditCardKey) {
+	/**
+	 * Adapter to retrieveEmaiIinfo, making possible a easier invocation sign
+	 */
+	public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum creditCardKey) {
+		return retrieveEmaiIinfo(sinceDate,toDate,buildEnum(creditCardKey));
+	}
+	
+	public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum[] creditCardKeys) {
 		 
-        CreditCardItem[] creditCardItems = new CreditCardItem[2];
+    	HashMap<CreditCardEnum,CreditCardItem> creditCardItems = new HashMap<CreditCardEnum,CreditCardItem>();
 		
             try {
             		Store store = initStore();
             		
             		store.connect(mailHost,userName,password);
  
-                    Folder myBankFolder = store.getFolder(mailInboxFolder);//get inbox folder
+            		//get inbox folder
+            		Folder myBankFolder = store.getFolder(mailInboxFolder);
  
-                    myBankFolder.open(Folder.READ_ONLY);//open folder only to read
+            		//open folder only to read
+            		myBankFolder.open(Folder.READ_ONLY);
             		
-                    SearchTerm[] searchTerms = buildFilters(sinceDate, toDate);
+            		for (CreditCardEnum creditCardKey : creditCardKeys) {
+            			
+            			//Retrieve the key words to build the filters
+            			CreditCardMailSearchCriteriaDTO searchCriteria = creditCardsMailSearchCriteria.get(creditCardKey);
+            			
+            			//Build all the filters according to the credit card
+            			SearchTerm customSearchTerm = buildFilters(sinceDate, toDate,searchCriteria);
+            			
+            			Message[] messages = myBankFolder.search(customSearchTerm);
+            			
+            			creditCardItems.put(creditCardKey,cardItemFactory.buildCreditCardItem(creditCardKey, messages[0]));
+            		}
             		
-            		SearchTerm customSearchTerm = new AndTerm(searchTerms);
-            		
-            		Message[] messages = myBankFolder.search(customSearchTerm);
-            		
-            		creditCardItems[0] = cardItemFactory.buildCreditCardItem(creditCardKey, messages[0]);
-            		
-            		creditCardItems[1] = cardItemFactory.buildCreditCardItem(creditCardKey, messages[1]);
-            		
-                    myBankFolder.close(true);
+            		myBankFolder.close(true);
  
                     store.close();
  
                     return creditCardItems;
             
             }
+            
             catch( NoSuchProviderException nspe) {
-            	throw new BusinessException("Couldn't connect to mail service provider");
-            }
-            catch( MessagingException me) {
-            	throw new BusinessException("Couldn't parser credit card htlm mail");
+            	throw new BusinessException("Couldn't connect to mail service provider",nspe);
             }
             
+            catch( MessagingException me) {
+            	throw new BusinessException("Couldn't parser credit card htlm mail",me);
+            }
     }
+	
+	protected CreditCardEnum[] buildEnum(CreditCardEnum creditCardKey){
+		CreditCardEnum[] creditCardKeys = new CreditCardEnum[1];
+		creditCardKeys[0] = creditCardKey;
+		return creditCardKeys;
+	}
+	
+	@Override
+	public Map<CreditCardEnum, CreditCardItem> retrieveEmailLastinfo(CreditCardEnum creditCardKey) {
+		return retrieveEmailLastinfo(buildEnum(creditCardKey));
+	}
 
-
-	private SearchTerm[] buildFilters(Date sinceDate, Date toDate) {
+	private SearchTerm buildFilters(Date sinceDate, Date toDate,CreditCardMailSearchCriteriaDTO searchCriteria) {
 		
 		SearchTerm olderThan = new ReceivedDateTerm(ComparisonTerm.LT,toDate);
 		SearchTerm newerThan = new ReceivedDateTerm(ComparisonTerm.GT, sinceDate);
-		SearchTerm subjectPattern = new SubjectTerm(mailSubjectPattern);
+		SearchTerm subjectPattern = new SubjectTerm(searchCriteria.getMailSubjectKey());
 		SearchTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.SEEN), true);
+		SearchTerm bodyTerm = new BodyTerm(searchCriteria.getMailBodyKey());
 		
-		SearchTerm[] searchTerms = new SearchTerm[4];
+		SearchTerm[] searchTerms = new SearchTerm[5];
 		searchTerms[0] = olderThan;
 		searchTerms[1] = newerThan;
 		searchTerms[2] = subjectPattern;
 		searchTerms[3] = flagTerm;
-		return searchTerms;
+		searchTerms[4] = bodyTerm;
+		
+		SearchTerm customSearchTerm = new AndTerm(searchTerms);
+		
+		return customSearchTerm;
 	}
 
-	private Store initStore() throws NoSuchProviderException {
+	protected Store initStore() throws NoSuchProviderException {
 		
 		Properties properties = new Properties();
  

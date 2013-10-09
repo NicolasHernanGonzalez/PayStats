@@ -21,8 +21,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
 import ar.com.gl.paystadistics.domain.CreditCardItem;
-import ar.com.gl.paystadistics.domain.CreditCardItemDTO;
 import ar.com.gl.paystadistics.domain.SantanderRioCreditCardItem;
+import ar.com.gl.paystadistics.dto.CreditCardItemDTO;
+import ar.com.gl.paystadistics.parser.ICreditCardItemHtmlParser;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/application-contextTest.xml"})
@@ -53,7 +54,25 @@ public class CreditCardItemFactoryTest {
 		when(message.getContent()).thenReturn(validSantanderRioMailSample1);
 		
 		//MUD
-		CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.SANTANDER_RIO, message);
+		CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
+		
+		//Asserts
+		assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
+		assertEquals(creditCarditem.getCreditCardName(),"Tarjeta VISA");
+		assertEquals(creditCarditem.getAmount(),"3261.51");
+		assertEquals(creditCarditem.getExpirationDate(),"01/10/2013");
+		assertEquals(creditCarditem.isAmex(),false);
+	}
+	
+	@Test
+	public void buildSantanderRioVisaCreditCardItemWithValidHtmlInputAndNoEnumKeyParam() throws IOException, MessagingException {
+		
+		//Mock message entity
+		Message message = mock(Message.class);
+		when(message.getContent()).thenReturn(validSantanderRioMailSample1);
+		
+		//MUD
+		CreditCardItem creditCarditem = creditCardItemFactory.buildSantanderRioCreditCardItem(message);
 		
 		//Asserts
 		assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
@@ -71,7 +90,7 @@ public class CreditCardItemFactoryTest {
 		when(message.getContent()).thenReturn(validSantanderRioMailSample2);
 		
 		//MUD
-		CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.SANTANDER_RIO, message);
+		CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
 		
 		//Asserts
 		assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
@@ -96,7 +115,7 @@ public class CreditCardItemFactoryTest {
 	@Test
 	@ExpectedException(ar.com.gl.paystadistics.exceptions.BusinessException.class)
 	public void buildSantanderRioCreditCardItemWithNullMessage(){
-		creditCardItemFactory.buildCreditCardItem(CreditCardEnum.SANTANDER_RIO,null);
+		creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO,null);
 	}
 	
 	public void buildSantanderRioCreditCardItemWithMalFormedHtmlMessage() throws IOException, MessagingException{
@@ -109,7 +128,7 @@ public class CreditCardItemFactoryTest {
 		
 		when(parser.paseHTML(anyObject().toString())).thenReturn(new CreditCardItemDTO(null, null, null));
 		
-		creditCardItemFactory.buildCreditCardItem(CreditCardEnum.SANTANDER_RIO,message);					
+		creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO,message);					
 		
 	}
 	

@@ -4,7 +4,8 @@ import javax.mail.Message;
 
 import lombok.Data;
 import lombok.NonNull;
-import ar.com.gl.paystadistics.services.ICreditCardItemHtmlParser;
+import ar.com.gl.paystadistics.exceptions.BusinessException;
+import ar.com.gl.paystadistics.parser.ICreditCardItemHtmlParser;
 
 /**
  * Template class responsible for providing the common class skeleton for all implementations delegating in the subclasses parsing mails behavior;
@@ -13,24 +14,29 @@ import ar.com.gl.paystadistics.services.ICreditCardItemHtmlParser;
  */
 @Data public abstract class CreditCardItem {
 
-	public final static String AMEX = "American Express";
-	
-	@NonNull
-	private String creditCardName;
-	
-	@NonNull
-	private String expirationDate;
-	
-	@NonNull
-	private String amount;
-	
-	public CreditCardItem(Message message,ICreditCardItemHtmlParser parser) {
-		parseInfo(message,parser);
-	}
+    public static final  String AMEX = "American Express";
 
-	abstract void parseInfo(Message message,ICreditCardItemHtmlParser parser) ;
-	
-	public boolean isAmex(){
-		return this.creditCardName.contains(AMEX);
-	}
+    @NonNull
+    private String creditCardName;
+
+    @NonNull
+    private String expirationDate;
+  
+    @NonNull
+    private String amount;
+
+    public CreditCardItem(Message message,ICreditCardItemHtmlParser parser) {
+
+        if (message == null){
+            throw new BusinessException("The message cannot be null");
+        }
+ 
+        parseInfo(message,parser);
+    }
+
+    abstract void parseInfo(Message message,ICreditCardItemHtmlParser parser) ;
+
+    public boolean isAmex(){
+        return this.creditCardName.contains(AMEX);
+    }
 }

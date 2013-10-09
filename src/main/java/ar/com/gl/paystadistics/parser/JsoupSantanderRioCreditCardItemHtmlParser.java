@@ -1,14 +1,14 @@
 /**
  * 
  */
-package ar.com.gl.paystadistics.services;
+package ar.com.gl.paystadistics.parser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
-import ar.com.gl.paystadistics.domain.CreditCardItemDTO;
+import ar.com.gl.paystadistics.dto.CreditCardItemDTO;
 
 /**
  * Jsoup implementation for <code>ICreditCardItemHtmlParser</code> that have the responsibility for interpreting 
@@ -39,9 +39,7 @@ public class JsoupSantanderRioCreditCardItemHtmlParser implements ICreditCardIte
 
 		amount = amount.replace("$&nbsp;", "").replace(".", "").replace(",", ".");
 		
-		CreditCardItemDTO creditCardItemDTO = new CreditCardItemDTO(amount,expirationDateNode.toString() , nameNode.toString()); 
-		
-		return creditCardItemDTO;
+		return new CreditCardItemDTO(amount,expirationDateNode.toString() , nameNode.toString()); 
 	}
 
 }

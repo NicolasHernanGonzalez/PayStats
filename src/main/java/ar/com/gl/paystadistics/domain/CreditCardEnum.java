@@ -1,5 +1,5 @@
 package ar.com.gl.paystadistics.domain;
 
 public enum CreditCardEnum {
-	SANTANDER_RIO;
+    VISA_SANTANDER_RIO,AMEX_SANTANDER_RIO;
 }
