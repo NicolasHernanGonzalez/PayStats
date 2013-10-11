@@ -12,12 +12,12 @@ import ar.com.gl.paystadistics.domain.CreditCardEnum;
 @ContextConfiguration(locations = {"classpath:/application-contextTest.xml"})
 public class PayStatsSysteFacadeTest {
 
-	@Autowired
-	private PayStatsSystemFacade facade;
-	
-	@Test
-	public void functionalTest(){
-		facade.exportLastStats(CreditCardEnum.AMEX_SANTANDER_RIO);
-	}
+    @Autowired
+    private PayStatsSystemFacade facade;
+    
+    @Test
+    public void functionalTest(){
+    facade.exportLastStats(CreditCardEnum.AMEX_SANTANDER_RIO);
+    }
 
 }
