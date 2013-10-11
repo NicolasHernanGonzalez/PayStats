@@ -6,6 +6,6 @@ import ar.com.gl.paystadistics.domain.CreditCardItem;
 
 public interface ICreditCardItemFactory {
 
-	CreditCardItem buildCreditCardItem(Message message);
+    CreditCardItem buildCreditCardItem(Message message);
 
 }

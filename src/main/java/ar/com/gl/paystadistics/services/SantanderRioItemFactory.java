@@ -19,16 +19,16 @@ import ar.com.gl.paystadistics.domain.SantanderRioCreditCardItem;
 @Component
 public class SantanderRioItemFactory implements ICreditCardItemFactory {
 
-	@Override
-	public CreditCardItem buildCreditCardItem(Message message) {
-		
-		log.info("Building SantanderRioItem...");
-		
-		CreditCardItem item = new SantanderRioCreditCardItem(message);
-		
-		log.debug("Build Success");
-		
-		return item;
-	}
+    @Override
+    public CreditCardItem buildCreditCardItem(Message message) {
+        
+        log.info("Building SantanderRioItem...");
+        
+        CreditCardItem item = new SantanderRioCreditCardItem(message);
+        
+        log.debug("Build Success");
+        
+        return item;
+    }
 
 }

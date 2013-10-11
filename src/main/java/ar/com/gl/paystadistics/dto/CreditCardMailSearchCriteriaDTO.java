@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 @Data
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class CreditCardMailSearchCriteriaDTO {
-	private String mailSubjectKey,mailBodyKey;
+    private String mailSubjectKey,mailBodyKey;
 
-	public CreditCardMailSearchCriteriaDTO() {}
-	
-	
+    public CreditCardMailSearchCriteriaDTO() {}
+    
+    
 }

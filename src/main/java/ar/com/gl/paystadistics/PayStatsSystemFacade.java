@@ -17,38 +17,38 @@ import ar.com.gl.paystadistics.services.IStatsExporter;
 @Log
 public class PayStatsSystemFacade {
 
-	@Autowired
-	private IEmailingService emailingService;
-	
-	@Autowired
-	private IStatsExporter statsExporter;
-	
-	public void exportLastStats(CreditCardEnum[] creditCardKey) {
-		
-		log.info("exporting stats...");
-		
-		for (CreditCardEnum creditCard : creditCardKey) {
-			log.info("exporting " + creditCard.toString() + " stats");
-			exportLastStats(creditCard);
-		}
-	}
-	
-	public void exportLastStats() {
-		log.info("Retrieving info for all configured credit cards");
-		throw new NotImplementedException();
-	}
-	
-	public void exportLastStats(CreditCardEnum creditCardKey) {
-		
-		log.info("Retrieving info for " + creditCardKey.toString());
-		
-		CreditCardEnum[] creditCardKeys = new CreditCardEnum[1];
+    @Autowired
+    private IEmailingService emailingService;
+    
+    @Autowired
+    private IStatsExporter statsExporter;
+    
+    public void exportLastStats(CreditCardEnum[] creditCardKey) {
+        
+        log.info("exporting stats...");
+        
+        for (CreditCardEnum creditCard : creditCardKey) {
+            log.info("exporting " + creditCard.toString() + " stats");
+            exportLastStats(creditCard);
+        }
+    }
+    
+    public void exportLastStats() {
+        log.info("Retrieving info for all configured credit cards");
+        throw new NotImplementedException();
+    }
+    
+    public void exportLastStats(CreditCardEnum creditCardKey) {
+        
+        log.info("Retrieving info for " + creditCardKey.toString());
+        
+        CreditCardEnum[] creditCardKeys = new CreditCardEnum[1];
         creditCardKeys[0] = creditCardKey;
-		
-		Map<CreditCardEnum,CreditCardItem> stats = emailingService.retrieveEmailLastinfo(creditCardKeys);
-		
-		log.info("exporting stats");
-		
-		statsExporter.exportStats(stats);
-	}
+        
+        Map<CreditCardEnum,CreditCardItem> stats = emailingService.retrieveEmailLastinfo(creditCardKeys);
+        
+        log.info("exporting stats");
+        
+        statsExporter.exportStats(stats);
+    }
 }

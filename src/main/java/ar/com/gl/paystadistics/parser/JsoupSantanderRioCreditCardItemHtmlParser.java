@@ -18,28 +18,28 @@ import ar.com.gl.paystadistics.dto.CreditCardItemDTO;
  */
 public class JsoupSantanderRioCreditCardItemHtmlParser implements ICreditCardItemHtmlParser {
 
-	/* (non-Javadoc)
-	 * @see ar.com.gl.paystadistics.services.ICreditCardItemHtmlParser#paseHTML(java.lang.String)
-	 */
-	@Override
-	public CreditCardItemDTO paseHTML(String htmlMail) {
-		
-		Document parsedDocument = Jsoup.parse(htmlMail);
+    /* (non-Javadoc)
+     * @see ar.com.gl.paystadistics.services.ICreditCardItemHtmlParser#paseHTML(java.lang.String)
+     */
+    @Override
+    public CreditCardItemDTO paseHTML(String htmlMail) {
+        
+        Document parsedDocument = Jsoup.parse(htmlMail);
 
-		Element element = parsedDocument.getElementsByClass("info").first();
+        Element element = parsedDocument.getElementsByClass("info").first();
 
-		//TODO Search the way to improve this shit, maybe searching in all tree looking for a key word such as "Fecha de Vencimiento"
-		Node nameNode = element.childNode(0).childNode(0).childNode(0).childNode(0).childNode(0);
+        //TODO Search the way to improve this shit, maybe searching in all tree looking for a key word such as "Fecha de Vencimiento"
+        Node nameNode = element.childNode(0).childNode(0).childNode(0).childNode(0).childNode(0);
 
-		Node expirationDateNode = element.childNode(0).childNode(2).childNode(1).childNode(0).childNode(0);
+        Node expirationDateNode = element.childNode(0).childNode(2).childNode(1).childNode(0).childNode(0);
 
-		Node amountNode = element.childNode(0).childNode(3).childNode(1).childNode(0).childNode(0);
+        Node amountNode = element.childNode(0).childNode(3).childNode(1).childNode(0).childNode(0);
 
-		String amount = amountNode.toString();
+        String amount = amountNode.toString();
 
-		amount = amount.replace("$&nbsp;", "").replace(".", "").replace(",", ".");
-		
-		return new CreditCardItemDTO(amount,expirationDateNode.toString() , nameNode.toString()); 
-	}
+        amount = amount.replace("$&nbsp;", "").replace(".", "").replace(",", ".");
+        
+        return new CreditCardItemDTO(amount,expirationDateNode.toString() , nameNode.toString()); 
+    }
 
 }

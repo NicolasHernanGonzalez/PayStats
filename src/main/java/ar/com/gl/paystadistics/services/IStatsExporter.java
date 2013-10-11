@@ -7,6 +7,6 @@ import ar.com.gl.paystadistics.domain.CreditCardItem;
 
 public interface IStatsExporter {
 
-	void exportStats(Map<CreditCardEnum,CreditCardItem> stats);
+    void exportStats(Map<CreditCardEnum,CreditCardItem> stats);
 
 }

@@ -41,51 +41,51 @@ import ar.com.gl.paystadistics.exceptions.BusinessException;
  */
 @Component
 public class EmailingService implements IEmailingService {
-	
-	@Value("${mail.storeProtocol}")
-	private String storeProtocol;
+    
+    @Value("${mail.storeProtocol}")
+    private String storeProtocol;
 
-	@Value("${mail.userName}")
-	private String userName;
+    @Value("${mail.userName}")
+    private String userName;
 
-	@Value("${mail.password}")
-	private String password;
+    @Value("${mail.password}")
+    private String password;
 
-	@Value("${mail.host}")
-	private String mailHost;
+    @Value("${mail.host}")
+    private String mailHost;
 
-	@Value("${mail.inboxFolder}")
-	private String mailInboxFolder;
-	
-	@Value("${mail.sinceDeltaDays}")
-	@Getter
-	private String sinceDeltaDays;
-	
-	@Value("${mail.toDeltaDays}")
-	@Getter
-	private String toDeltaDays;
-	
-	@Value("${mail.firstDayMonth}")
-	@Getter
-	private String firstDayMonth;
-	
-	@Autowired
-	private CreditCardItemFactory cardItemFactory;
-	
-	@Resource
-	private Map<CreditCardEnum,CreditCardMailSearchCriteriaDTO> creditCardsMailSearchCriteria;
-	
-	/**
-	 * Use as default date parameters the last days of the past month, and the first days of the current one.
-	 * @param creditCardKey
-	 * @return
-	 */
-	public Map<CreditCardEnum,CreditCardItem> retrieveEmailLastinfo(CreditCardEnum[] creditCardKeys) {
-		
-		Calendar calendar = getCalendar();
-		
+    @Value("${mail.inboxFolder}")
+    private String mailInboxFolder;
+    
+    @Value("${mail.sinceDeltaDays}")
+    @Getter
+    private String sinceDeltaDays;
+    
+    @Value("${mail.toDeltaDays}")
+    @Getter
+    private String toDeltaDays;
+    
+    @Value("${mail.firstDayMonth}")
+    @Getter
+    private String firstDayMonth;
+    
+    @Autowired
+    private CreditCardItemFactory cardItemFactory;
+    
+    @Resource
+    private Map<CreditCardEnum,CreditCardMailSearchCriteriaDTO> creditCardsMailSearchCriteria;
+    
+    /**
+     * Use as default date parameters the last days of the past month, and the first days of the current one.
+     * @param creditCardKey
+     * @return
+     */
+    public Map<CreditCardEnum,CreditCardItem> retrieveEmailLastinfo(CreditCardEnum[] creditCardKeys) {
+        
+        Calendar calendar = getCalendar();
+        
         //SinceDate
-		calendar.set(Calendar.DAY_OF_MONTH,Integer.valueOf(this.getFirstDayMonth()));  
+        calendar.set(Calendar.DAY_OF_MONTH,Integer.valueOf(this.getFirstDayMonth()));  
         calendar.add(Calendar.DATE,Integer.valueOf(this.getSinceDeltaDays()));
         Date sinceDate = calendar.getTime();
        
@@ -93,55 +93,55 @@ public class EmailingService implements IEmailingService {
         calendar = getCalendar();
         calendar.set(Calendar.DAY_OF_MONTH,Integer.valueOf(this.getToDeltaDays()));
         Date toDate = calendar.getTime();
-		
+        
         return retrieveEmaiIinfo(sinceDate, toDate, creditCardKeys);
-	}
-	
-	/**
-	 * Designed only for testing purpose
-	 * @return
-	 */
-	protected Calendar getCalendar(){
-		return Calendar.getInstance();
-	}
-	
-	
-	/**
-	 * Adapter to retrieveEmaiIinfo, making possible a easier invocation sign
-	 */
-	public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum creditCardKey) {
-		return retrieveEmaiIinfo(sinceDate,toDate,buildEnum(creditCardKey));
-	}
-	
-	public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum[] creditCardKeys) {
-		 
-    	HashMap<CreditCardEnum,CreditCardItem> creditCardItems = new HashMap<CreditCardEnum,CreditCardItem>();
-		
+    }
+    
+    /**
+     * Designed only for testing purpose
+     * @return
+     */
+    protected Calendar getCalendar(){
+        return Calendar.getInstance();
+    }
+    
+    
+    /**
+     * Adapter to retrieveEmaiIinfo, making possible a easier invocation sign
+     */
+    public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum creditCardKey) {
+        return retrieveEmaiIinfo(sinceDate,toDate,buildEnum(creditCardKey));
+    }
+    
+    public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum[] creditCardKeys) {
+         
+        HashMap<CreditCardEnum,CreditCardItem> creditCardItems = new HashMap<CreditCardEnum,CreditCardItem>();
+        
             try {
-            		Store store = initStore();
-            		
-            		store.connect(mailHost,userName,password);
+                    Store store = initStore();
+                    
+                    store.connect(mailHost,userName,password);
  
-            		//get inbox folder
-            		Folder myBankFolder = store.getFolder(mailInboxFolder);
+                    //get inbox folder
+                    Folder myBankFolder = store.getFolder(mailInboxFolder);
  
-            		//open folder only to read
-            		myBankFolder.open(Folder.READ_ONLY);
-            		
-            		for (CreditCardEnum creditCardKey : creditCardKeys) {
-            			
-            			//Retrieve the key words to build the filters
-            			CreditCardMailSearchCriteriaDTO searchCriteria = creditCardsMailSearchCriteria.get(creditCardKey);
-            			
-            			//Build all the filters according to the credit card
-            			SearchTerm customSearchTerm = buildFilters(sinceDate, toDate,searchCriteria);
-            			
-            			Message[] messages = myBankFolder.search(customSearchTerm);
-            			
-            			creditCardItems.put(creditCardKey,cardItemFactory.buildCreditCardItem(creditCardKey, messages[0]));
-            		}
-            		
-            		myBankFolder.close(true);
+                    //open folder only to read
+                    myBankFolder.open(Folder.READ_ONLY);
+                    
+                    for (CreditCardEnum creditCardKey : creditCardKeys) {
+                        
+                        //Retrieve the key words to build the filters
+                        CreditCardMailSearchCriteriaDTO searchCriteria = creditCardsMailSearchCriteria.get(creditCardKey);
+                        
+                        //Build all the filters according to the credit card
+                        SearchTerm customSearchTerm = buildFilters(sinceDate, toDate,searchCriteria);
+                        
+                        Message[] messages = myBankFolder.search(customSearchTerm);
+                        
+                        creditCardItems.put(creditCardKey,cardItemFactory.buildCreditCardItem(creditCardKey, messages[0]));
+                    }
+                    
+                    myBankFolder.close(true);
  
                     store.close();
  
@@ -150,55 +150,55 @@ public class EmailingService implements IEmailingService {
             }
             
             catch( NoSuchProviderException nspe) {
-            	throw new BusinessException("Couldn't connect to mail service provider",nspe);
+                throw new BusinessException("Couldn't connect to mail service provider",nspe);
             }
             
             catch( MessagingException me) {
-            	throw new BusinessException("Couldn't parser credit card htlm mail",me);
+                throw new BusinessException("Couldn't parser credit card htlm mail",me);
             }
     }
-	
-	protected CreditCardEnum[] buildEnum(CreditCardEnum creditCardKey){
-		CreditCardEnum[] creditCardKeys = new CreditCardEnum[1];
-		creditCardKeys[0] = creditCardKey;
-		return creditCardKeys;
-	}
-	
-	@Override
-	public Map<CreditCardEnum, CreditCardItem> retrieveEmailLastinfo(CreditCardEnum creditCardKey) {
-		return retrieveEmailLastinfo(buildEnum(creditCardKey));
-	}
+    
+    protected CreditCardEnum[] buildEnum(CreditCardEnum creditCardKey){
+        CreditCardEnum[] creditCardKeys = new CreditCardEnum[1];
+        creditCardKeys[0] = creditCardKey;
+        return creditCardKeys;
+    }
+    
+    @Override
+    public Map<CreditCardEnum, CreditCardItem> retrieveEmailLastinfo(CreditCardEnum creditCardKey) {
+        return retrieveEmailLastinfo(buildEnum(creditCardKey));
+    }
 
-	private SearchTerm buildFilters(Date sinceDate, Date toDate,CreditCardMailSearchCriteriaDTO searchCriteria) {
-		
-		SearchTerm olderThan = new ReceivedDateTerm(ComparisonTerm.LT,toDate);
-		SearchTerm newerThan = new ReceivedDateTerm(ComparisonTerm.GT, sinceDate);
-		SearchTerm subjectPattern = new SubjectTerm(searchCriteria.getMailSubjectKey());
-		SearchTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.SEEN), true);
-		SearchTerm bodyTerm = new BodyTerm(searchCriteria.getMailBodyKey());
-		
-		SearchTerm[] searchTerms = new SearchTerm[5];
-		searchTerms[0] = olderThan;
-		searchTerms[1] = newerThan;
-		searchTerms[2] = subjectPattern;
-		searchTerms[3] = flagTerm;
-		searchTerms[4] = bodyTerm;
-		
-		SearchTerm customSearchTerm = new AndTerm(searchTerms);
-		
-		return customSearchTerm;
-	}
+    private SearchTerm buildFilters(Date sinceDate, Date toDate,CreditCardMailSearchCriteriaDTO searchCriteria) {
+        
+        SearchTerm olderThan = new ReceivedDateTerm(ComparisonTerm.LT,toDate);
+        SearchTerm newerThan = new ReceivedDateTerm(ComparisonTerm.GT, sinceDate);
+        SearchTerm subjectPattern = new SubjectTerm(searchCriteria.getMailSubjectKey());
+        SearchTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.SEEN), true);
+        SearchTerm bodyTerm = new BodyTerm(searchCriteria.getMailBodyKey());
+        
+        SearchTerm[] searchTerms = new SearchTerm[5];
+        searchTerms[0] = olderThan;
+        searchTerms[1] = newerThan;
+        searchTerms[2] = subjectPattern;
+        searchTerms[3] = flagTerm;
+        searchTerms[4] = bodyTerm;
+        
+        SearchTerm customSearchTerm = new AndTerm(searchTerms);
+        
+        return customSearchTerm;
+    }
 
-	protected Store initStore() throws NoSuchProviderException {
-		
-		Properties properties = new Properties();
+    protected Store initStore() throws NoSuchProviderException {
+        
+        Properties properties = new Properties();
  
         properties.setProperty("mail.store.protocol",storeProtocol);
         
         Session session = Session.getDefaultInstance(properties, null);
         
         Store store = session.getStore(storeProtocol);
-		
+        
         return store;
-	}
+    }
 }
