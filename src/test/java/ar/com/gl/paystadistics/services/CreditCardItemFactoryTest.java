@@ -39,98 +39,99 @@ public class CreditCardItemFactoryTest {
     
     @Before
     public void setup() throws IOException {
-    //Load examples from the file system
-    validSantanderRioMailSample1 = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/SantanderRioMailSamples/mail1.html")));
-    validSantanderRioMailSample2 = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/SantanderRioMailSamples/mail2.html")));
-    invalidSantanderRioMailSample = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/SantanderRioMailSamples/mail3.html")));
+
+        // Load examples from the file system
+        validSantanderRioMailSample1 = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/SantanderRioMailSamples/mail1.html")));
+        validSantanderRioMailSample2 = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/SantanderRioMailSamples/mail2.html")));
+        invalidSantanderRioMailSample = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/SantanderRioMailSamples/mail3.html")));
     }
 
     
     @Test
     public void buildSantanderRioVisaCreditCardItemWithValidHtmlInputAndEnumKeyParam() throws IOException, MessagingException {
-    
-    //Mock message entity
-    Message message = mock(Message.class);
-    when(message.getContent()).thenReturn(validSantanderRioMailSample1);
-    
-    //MUD
-    CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
-    
-    //Asserts
-    assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
-    assertEquals(creditCarditem.getCreditCardName(),"Tarjeta VISA");
-    assertEquals(creditCarditem.getAmount(),"3261.51");
-    assertEquals(creditCarditem.getExpirationDate(),"01/10/2013");
-    assertEquals(creditCarditem.isAmex(),false);
+
+        // Mock message entity
+        Message message = mock(Message.class);
+        when(message.getContent()).thenReturn(validSantanderRioMailSample1);
+        
+
+        // MUD
+        CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
+
+        // Asserts
+        assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
+        assertEquals(creditCarditem.getCreditCardName(), "Tarjeta VISA");
+        assertEquals(creditCarditem.getAmount(), "3261.51");
+        assertEquals(creditCarditem.getExpirationDate(), "01/10/2013");
+        assertEquals(creditCarditem.isAmex(), false);
     }
     
     @Test
     public void buildSantanderRioVisaCreditCardItemWithValidHtmlInputAndNoEnumKeyParam() throws IOException, MessagingException {
     
     //Mock message entity
-    Message message = mock(Message.class);
-    when(message.getContent()).thenReturn(validSantanderRioMailSample1);
+        Message message = mock(Message.class);
+        when(message.getContent()).thenReturn(validSantanderRioMailSample1);
     
     //MUD
-    CreditCardItem creditCarditem = creditCardItemFactory.buildSantanderRioCreditCardItem(message);
+        CreditCardItem creditCarditem = creditCardItemFactory.buildSantanderRioCreditCardItem(message);
     
     //Asserts
-    assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
-    assertEquals(creditCarditem.getCreditCardName(),"Tarjeta VISA");
-    assertEquals(creditCarditem.getAmount(),"3261.51");
-    assertEquals(creditCarditem.getExpirationDate(),"01/10/2013");
-    assertEquals(creditCarditem.isAmex(),false);
+        assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
+        assertEquals(creditCarditem.getCreditCardName(),"Tarjeta VISA");
+        assertEquals(creditCarditem.getAmount(),"3261.51");
+        assertEquals(creditCarditem.getExpirationDate(),"01/10/2013");
+        assertEquals(creditCarditem.isAmex(),false);
     }    
     
     @Test
     public void buildSantanderRioAmexCreditCardItemWithValidHtmlInputAndEnumKeyParam() throws IOException, MessagingException {
     
-    //Mock message entity
-    Message message = mock(Message.class);
-    when(message.getContent()).thenReturn(validSantanderRioMailSample2);
-    
-    //MUD
-    CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
-    
-    //Asserts
-    assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
-    assertEquals(creditCarditem.getCreditCardName(),"Tarjeta American Express");
-    assertEquals(creditCarditem.getAmount(),"693.37");
-    assertEquals(creditCarditem.getExpirationDate(),"02/10/2013");
-    assertEquals(creditCarditem.isAmex(),true);
+        //Mock message entity
+        Message message = mock(Message.class);
+        when(message.getContent()).thenReturn(validSantanderRioMailSample2);
+        
+        //MUD
+        CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
+        
+        //Asserts
+        assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
+        assertEquals(creditCarditem.getCreditCardName(),"Tarjeta American Express");
+        assertEquals(creditCarditem.getAmount(),"693.37");
+        assertEquals(creditCarditem.getExpirationDate(),"02/10/2013");
+        assertEquals(creditCarditem.isAmex(),true);
     }
     
     @Test
     @ExpectedException(ar.com.gl.paystadistics.exceptions.BusinessException.class)
     public void buildSantanderRioVisaCreditCardItemWithValidInvalidHtmlInputWithoutEnumKeyParam() throws MessagingException, IOException {
     
-    //Mock message entity
-    Message message = mock(Message.class);
-    when(message.getContent()).thenReturn(invalidSantanderRioMailSample);
-    
-    //MUD
-    creditCardItemFactory.buildSantanderRioCreditCardItem(message);
+        //Mock message entity
+        Message message = mock(Message.class);
+        when(message.getContent()).thenReturn(invalidSantanderRioMailSample);
+        
+        //MUD
+        creditCardItemFactory.buildSantanderRioCreditCardItem(message);
     }
     
     @Test
     @ExpectedException(ar.com.gl.paystadistics.exceptions.BusinessException.class)
     public void buildSantanderRioCreditCardItemWithNullMessage(){
-    creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO,null);
+        creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO,null);
     }
     
     public void buildSantanderRioCreditCardItemWithMalFormedHtmlMessage() throws IOException, MessagingException{
     
-    Message message = mock(Message.class);
-    
-    when(message.getContent()).thenReturn(anyObject());
-    
-    ICreditCardItemHtmlParser parser = mock(ICreditCardItemHtmlParser.class);
-    
-    when(parser.paseHTML(anyObject().toString())).thenReturn(new CreditCardItemDTO(null, null, null));
-    
-    creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO,message);    
+        Message message = mock(Message.class);
+        
+        when(message.getContent()).thenReturn(anyObject());
+        
+        ICreditCardItemHtmlParser parser = mock(ICreditCardItemHtmlParser.class);
+        
+        when(parser.paseHTML(anyObject().toString())).thenReturn(new CreditCardItemDTO(null, null, null));
+        
+        creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO,message);    
     
     }
-    
     
 }
