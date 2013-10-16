@@ -38,13 +38,14 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
         exportStats(stats,"Personal Business Stuff");
     }
     
-    private void exportStats(Map<CreditCardEnum,CreditCardItem> dtos,String spreadSheetName) {
+    protected void exportStats(Map<CreditCardEnum,CreditCardItem> dtos,String spreadSheetName) {
         
         FeedURLFactory factory = FeedURLFactory.getDefault();
 
         try {
                 
                 log.info("Verifying credentials...");
+                
                 SpreadsheetService service = verifyCredentials();
             
                 SpreadsheetFeed spreadsheetFeed = getSpreadSheetFeed(factory, service,spreadSheetName);
@@ -85,13 +86,13 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             return worksheet.getCellFeedUrl();
         }
         
-        private SpreadsheetService verifyCredentials() throws AuthenticationException {
+        protected SpreadsheetService verifyCredentials() throws AuthenticationException {
             SpreadsheetService service = new SpreadsheetService("metricSpreadSheet");
-            service.setUserCredentials("nicolas.hernan.gonzalez@gmail.com","WANNABESEDEATED3");
+            service.setUserCredentials("nicolas.hernan.gonzalez@gmail.com","");
             return service;
         }
         
-        private SpreadsheetFeed getSpreadSheetFeed(FeedURLFactory factory, SpreadsheetService service,String spreadSheetName) throws IOException, ServiceException {
+        protected SpreadsheetFeed getSpreadSheetFeed(FeedURLFactory factory, SpreadsheetService service,String spreadSheetName) throws IOException, ServiceException {
             SpreadsheetQuery spreadsheetQuery = new SpreadsheetQuery(factory.getSpreadsheetsFeedUrl());
             spreadsheetQuery.setTitleQuery(spreadSheetName);
             spreadsheetQuery.setTitleExact(true);
@@ -120,7 +121,6 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
                 expirationDateCellFeed.changeInputValueLocal(creditCardExpirationDate);
                 expirationDateCellFeed.update();
             }
-
             
         }
 
@@ -142,8 +142,9 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             CellFeed cellFeed = service.query(cellQuery,CellFeed.class);
             
             return cellFeed.getEntries().get(0);
-        
         }
+        
+
     
 
 }
