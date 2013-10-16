@@ -15,7 +15,7 @@ public class PayStatsSysteFacadeTest {
     @Autowired
     private PayStatsSystemFacade facade;
     
-    @Test
+//    @Test
     public void functionalTest(){
         facade.exportLastStats(CreditCardEnum.AMEX_SANTANDER_RIO);
     }

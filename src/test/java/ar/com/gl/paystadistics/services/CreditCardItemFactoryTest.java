@@ -1,6 +1,7 @@
 package ar.com.gl.paystadistics.services;
 
 import static junit.framework.Assert.assertEquals;
+
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
