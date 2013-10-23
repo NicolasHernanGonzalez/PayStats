@@ -138,6 +138,9 @@ public class EmailingService implements IEmailingService {
                         
                         Message[] messages = myBankFolder.search(customSearchTerm);
                         
+                        verifyMessages(messages);
+                        
+                        // messages[0] <-- Shouldn't have more than one message, but it is possible depending on the search criterias
                         creditCardItems.put(creditCardKey,cardItemFactory.buildCreditCardItem(creditCardKey, messages[0]));
                     }
                     
@@ -158,6 +161,12 @@ public class EmailingService implements IEmailingService {
             }
     }
     
+    private void verifyMessages(Message[] messages) {
+        if (messages == null || messages.length == 0){
+            throw new BusinessException("No messages found with the given search criteria");
+        }
+    }
+
     protected CreditCardEnum[] buildEnum(CreditCardEnum creditCardKey){
         CreditCardEnum[] creditCardKeys = new CreditCardEnum[1];
         creditCardKeys[0] = creditCardKey;
@@ -178,11 +187,11 @@ public class EmailingService implements IEmailingService {
         SearchTerm bodyTerm = new BodyTerm(searchCriteria.getMailBodyKey());
         
         SearchTerm[] searchTerms = new SearchTerm[5];
-        searchTerms[0] = olderThan;
-        searchTerms[1] = newerThan;
-        searchTerms[2] = subjectPattern;
-        searchTerms[3] = flagTerm;
-        searchTerms[4] = bodyTerm;
+        searchTerms[0] = subjectPattern;
+        searchTerms[1] = flagTerm;
+        searchTerms[2] = bodyTerm;
+        searchTerms[3] = olderThan;
+        searchTerms[4] = newerThan;
         
         SearchTerm customSearchTerm = new AndTerm(searchTerms);
         

@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import lombok.extern.java.Log;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
@@ -31,6 +32,11 @@ import com.google.gdata.util.ServiceException;
 @Log
 public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
 
+    @Value("${google.drive.user}")
+    private String googleUser;
+
+    @Value("${google.drive.password}")
+    private String googlePass;
     
     @Override
     public void exportStats(Map<CreditCardEnum, CreditCardItem> stats) {
@@ -78,7 +84,6 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             }
         }
 
-
         private URL getCellFeedUrl(SpreadsheetService service, SpreadsheetEntry entry) throws IOException, ServiceException {
             WorksheetFeed worksheetFeed = service.getFeed(entry.getWorksheetFeedUrl(), WorksheetFeed.class);
             List<WorksheetEntry> worksheets = worksheetFeed.getEntries();
@@ -88,7 +93,7 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
         
         protected SpreadsheetService verifyCredentials() throws AuthenticationException {
             SpreadsheetService service = new SpreadsheetService("metricSpreadSheet");
-            service.setUserCredentials("nicolas.hernan.gonzalez@gmail.com","");
+            service.setUserCredentials(googleUser,googlePass);
             return service;
         }
         
@@ -143,8 +148,5 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             
             return cellFeed.getEntries().get(0);
         }
-        
-
-    
 
 }

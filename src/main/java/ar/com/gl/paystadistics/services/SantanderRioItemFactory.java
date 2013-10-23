@@ -19,6 +19,9 @@ import ar.com.gl.paystadistics.domain.SantanderRioCreditCardItem;
 @Component
 public class SantanderRioItemFactory implements ICreditCardItemFactory {
 
+    /**
+     * @inherited
+     */
     @Override
     public CreditCardItem buildCreditCardItem(Message message) {
         
@@ -30,5 +33,4 @@ public class SantanderRioItemFactory implements ICreditCardItemFactory {
         
         return item;
     }
-
 }

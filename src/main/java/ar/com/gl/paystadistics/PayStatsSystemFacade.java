@@ -4,18 +4,24 @@ import java.util.Map;
 
 import lombok.extern.java.Log;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
 import ar.com.gl.paystadistics.domain.CreditCardItem;
 import ar.com.gl.paystadistics.services.IEmailingService;
 import ar.com.gl.paystadistics.services.IStatsExporter;
 
-@Component
+
+@Qualifier("defaultFacade")
+@Service
 @Log
-public class PayStatsSystemFacade {
+/**
+ * @inheritDoc
+ * 
+ */
+public class PayStatsSystemFacade implements IPayStatsSystemFacade {
 
     @Autowired
     private IEmailingService emailingService;
@@ -23,19 +29,23 @@ public class PayStatsSystemFacade {
     @Autowired
     private IStatsExporter statsExporter;
     
-    public void exportLastStats(CreditCardEnum[] creditCardKey) {
+    
+    public void exportLastStats(CreditCardEnum[] creditCardKeys) {
         
-        log.info("exporting stats...");
+        log.info("exporting stats for  " + creditCardKeys);
         
-        for (CreditCardEnum creditCard : creditCardKey) {
-            log.info("exporting " + creditCard.toString() + " stats");
-            exportLastStats(creditCard);
-        }
+        emailingService.retrieveEmailLastinfo(creditCardKeys);
+        
+        log.info("Stats exported successfully!");
     }
     
     public void exportLastStats() {
-        log.info("Retrieving info for all configured credit cards");
-        throw new NotImplementedException();
+        
+        log.info("exporting stats for all configured credit cards...");
+        
+        emailingService.retrieveEmailLastinfo(CreditCardEnum.getAllCreditCardsEnumAsArray());
+        
+        log.info("Stats exported successfully!");
     }
     
     public void exportLastStats(CreditCardEnum creditCardKey) {
@@ -50,5 +60,7 @@ public class PayStatsSystemFacade {
         log.info("exporting stats");
         
         statsExporter.exportStats(stats);
+        
+        log.info("Stats exported successfully!");
     }
 }

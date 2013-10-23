@@ -21,7 +21,6 @@ public class CreditCardItemFactory {
     private Map<CreditCardEnum,ICreditCardItemFactory> creditCardsItemFactories;
     
     
-
     public CreditCardItem buildCreditCardItem(CreditCardEnum creditCardKey,Message message) {
         
         log.debug("Choosing apropiate factory to build a CreditCardItem...");

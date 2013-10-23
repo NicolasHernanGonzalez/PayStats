@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
@@ -9,9 +11,9 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schem/aop/spring-aop-3.0.xsd
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-http://www.springframework.org/schema/aop http://www.springframework.org/schem/aop/spring-aop-3.0.xsd">
+http://www.springframework.org/schema/aop http://www.springframework.org/schem/aop/spring-aop-3.0.xsd
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-<!-- bean definitions here -->
 
 	<context:component-scan base-package="ar.com.gl.paystadistics">
 		
@@ -21,13 +23,10 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schem/a
 	
 	<context:annotation-config />
 	
-<!-- 	<mvc:annotation-driven/>  -->
-	
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 					<value>file:///${catalina.home}/paystats_conf/generalConf.properties</value>
-<!-- 					<value>file:///C:/Users/n.gonzalez/development/apache-tomcat-7.0.42/paystats_conf/generalConf.properties</value> -->
  			</list>
 		</property>
 	</bean>
@@ -42,18 +41,51 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schem/a
 	</util:map>
 	
 	<bean id="SantanderRioVisa" class="ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO">
-		<constructor-arg index="0" value="${mail.rio.visa.body.key}"/>
-		<constructor-arg  index="1" value="${mail.rio.subjectPattern}"/>
+		<constructor-arg index="1" value="${mail.rio.visa.body.key}"/>
+		<constructor-arg  index="0" value="${mail.rio.subjectPattern}"/>
 	</bean>
 	
 	<bean id="SantanderRioAmex" class="ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO">
-		<constructor-arg index="0" value="${mail.rio.amex.body.key}"/>
-		<constructor-arg  index="1" value="${mail.rio.subjectPattern}"/>
+		<constructor-arg index="1" value="${mail.rio.amex.body.key}"/>
+		<constructor-arg  index="0" value="${mail.rio.subjectPattern}"/>
 	</bean>
 	
 	<util:map id="creditCardsMailSearchCriteria" key-type="ar.com.gl.paystadistics.domain.CreditCardEnum" value-type="ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO">
 		<entry key="VISA_SANTANDER_RIO" value-ref="SantanderRioVisa"/>
 		<entry key="AMEX_SANTANDER_RIO" value-ref="SantanderRioAmex"/>
 	</util:map>
+	
+	
+	<bean id="SantanderRioExportStatsJob" class="ar.com.gl.paystadistics.jobs.CreditCardsExportStatsJob"/>
+	
+
+<!--     	run every morning at 6 AM -->
+<!--     	<property name="cronExpression" value="0 0 13 27-04 1-12 ?"/> -->
+
+	
+	<bean name="CreditCardsStatJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+ 
+		<property name="jobClass" value="ar.com.gl.paystadistics.jobs.CreditCardsExportStatsJob"/>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="creditCardKeys" value="${job.creditCardsKeys}"/>
+				<entry key="payStatsSystemFacade" value-ref="payStatsSystemFacade"/>
+			</map>
+		</property>
+ 	</bean>
+ 	
+ 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+ 		<property name="jobDetail" ref="CreditCardsStatJob" />
+		<property name="cronExpression" value="0/9 * * * * ?" />
+ 	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+
+	    <property name="triggers">
+	        <list>
+	            <ref bean="cronTrigger" />
+	        </list>
+	    </property>
+	</bean>
 		
 </beans>
