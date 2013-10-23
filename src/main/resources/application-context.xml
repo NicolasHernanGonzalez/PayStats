@@ -76,7 +76,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
  	
  	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
  		<property name="jobDetail" ref="CreditCardsStatJob" />
-		<property name="cronExpression" value="0/9 * * * * ?" />
+		<property name="cronExpression" value="${job.cron.expression}"/>
  	</bean>
 	
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
