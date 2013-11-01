@@ -37,7 +37,6 @@ public class CreditCardsExportStatsJob extends QuartzJobBean {
         this.payStatsSystemFacade = payStatsSystemFacade;
     }
 
-
     
     /**
      * @param creditCardKeys the creditCardKeys to set
@@ -49,8 +48,5 @@ public class CreditCardsExportStatsJob extends QuartzJobBean {
             this.creditCardKeys.add(CreditCardEnum.valueOf(splitedKey));
         }
     }
-
-    
-   
 
  }

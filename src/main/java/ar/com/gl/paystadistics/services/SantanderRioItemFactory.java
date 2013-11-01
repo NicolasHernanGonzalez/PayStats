@@ -11,7 +11,7 @@ import ar.com.gl.paystadistics.domain.SantanderRioCreditCardItem;
 
 /**
  * 'Santander Rio' implementation of <code>ICreditCardItemFactory</code> that knows how to build a <code>CreditCardItem</codes> 
- * from a mail with the 'Santander Rio' mail format and styles.
+ * from a mail with a 'Santander Rio' mail format and styles.
  * @author n.gonzalez
  *
  */
