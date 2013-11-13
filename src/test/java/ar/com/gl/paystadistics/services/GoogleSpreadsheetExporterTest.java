@@ -21,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
-import ar.com.gl.paystadistics.domain.CreditCardItem;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
 
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
@@ -44,7 +44,7 @@ public class GoogleSpreadsheetExporterTest {
         //Mock
         GoogleSpreadsheetStatsExporter googleExporter = mock(GoogleSpreadsheetStatsExporter.class);
         
-        Map<CreditCardEnum, CreditCardItem> map = new HashMap<CreditCardEnum, CreditCardItem>();
+        Map<CreditCardEnum, CreditCardBillItem> map = new HashMap<CreditCardEnum, CreditCardBillItem>();
         
         Mockito.doCallRealMethod().when(googleExporter).exportStats(map);
         Mockito.doNothing().when(googleExporter).exportStats(anyMap(), anyString());
@@ -70,7 +70,7 @@ public class GoogleSpreadsheetExporterTest {
         when(googleSpreadsheetStatsExporter.getSpreadSheetFeed(any(FeedURLFactory.class), any(SpreadsheetService.class), anyString())).thenReturn(spreadsheetFeed);
         when(spreadsheetFeed.getEntries()).thenReturn(new ArrayList());
 
-        googleSpreadsheetStatsExporter.exportStats(new HashMap<CreditCardEnum, CreditCardItem>(), "spreadSheetName");
+        googleSpreadsheetStatsExporter.exportStats(new HashMap<CreditCardEnum, CreditCardBillItem>(), "spreadSheetName");
     }
     
     

@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import ar.com.gl.paystadistics.dto.CreditCardItemDTO;
+import ar.com.gl.paystadistics.dto.CreditCardBillItemDTO;
 import ar.com.gl.paystadistics.exceptions.BusinessException;
 import ar.com.gl.paystadistics.parser.ICreditCardItemHtmlParser;
 import ar.com.gl.paystadistics.parser.JsoupSantanderRioCreditCardItemHtmlParser;
@@ -15,10 +15,10 @@ import ar.com.gl.paystadistics.parser.JsoupSantanderRioCreditCardItemHtmlParser;
  * how to parse info from "Santander Rio" email message 
  * @author n.gonzalez
  */
-public class SantanderRioCreditCardItem extends CreditCardItem {
+public class SantanderRioCreditCardBillItem extends CreditCardBillItem {
 
     //TODO Desacoplar dominio y java mail
-    public SantanderRioCreditCardItem(Message message) {
+    public SantanderRioCreditCardBillItem(Message message) {
         super(message,new JsoupSantanderRioCreditCardItemHtmlParser());
     }
 
@@ -32,7 +32,7 @@ public class SantanderRioCreditCardItem extends CreditCardItem {
           
             String htmlMail = (String) message.getContent();
 
-            CreditCardItemDTO cardItemDTO = parser.paseHTML(htmlMail); 
+            CreditCardBillItemDTO cardItemDTO = parser.paseHTML(htmlMail); 
  
             this.setExpirationDate(cardItemDTO.getExpirationDate());
             this.setCreditCardName(cardItemDTO.getCreditCardName());

@@ -2,7 +2,7 @@ package ar.com.gl.paystadistics.services;
 
 import javax.mail.Message;
 
-import ar.com.gl.paystadistics.domain.CreditCardItem;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
 
 /**
  * 
@@ -16,6 +16,6 @@ public interface ICreditCardItemFactory {
      * @param message Representation of a mail
      * @return
      */
-    CreditCardItem buildCreditCardItem(Message message);
+    CreditCardBillItem buildCreditCardItem(Message message);
 
 }

@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -16,7 +16,7 @@ import com.sun.istack.NotNull;
  *
  */
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class CreditCardItemDTO {
+public class CreditCardBillItemDTO {
 
     @NotNull
     @Getter

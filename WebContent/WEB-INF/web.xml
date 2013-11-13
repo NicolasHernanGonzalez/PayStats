@@ -24,6 +24,12 @@
         <param-value>ar.com.gl.paystadistics.exceptions.BusinessExceptionMapper</param-value>
 	</context-param>
    
+   
+   <context-param>
+        <param-name>resteasy.providers</param-name>
+        <param-value>ar.com.gl.paystadistics.exceptions.ValidationExceptionHandlerREST</param-value>
+	</context-param>
+   
    <servlet-mapping>
       <servlet-name>Resteasy</servlet-name>
       <url-pattern>/*</url-pattern>

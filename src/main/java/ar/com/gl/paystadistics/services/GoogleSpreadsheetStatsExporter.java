@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
-import ar.com.gl.paystadistics.domain.CreditCardItem;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
 import ar.com.gl.paystadistics.exceptions.BusinessException;
 
 import com.google.gdata.client.spreadsheet.CellQuery;
@@ -39,12 +39,12 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
     private String googlePass;
     
     @Override
-    public void exportStats(Map<CreditCardEnum, CreditCardItem> stats) {
+    public void exportStats(Map<CreditCardEnum, CreditCardBillItem> stats) {
         log.info("Export stats using google spreasheet implementation");
         exportStats(stats,"Personal Business Stuff");
     }
     
-    protected void exportStats(Map<CreditCardEnum,CreditCardItem> dtos,String spreadSheetName) {
+    protected void exportStats(Map<CreditCardEnum,CreditCardBillItem> dtos,String spreadSheetName) {
         
         FeedURLFactory factory = FeedURLFactory.getDefault();
 
@@ -105,9 +105,9 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
         }
         
             
-        private void updateCells(SpreadsheetService service, Map<CreditCardEnum,CreditCardItem> dtos,URL cellFeedUrl) throws IOException, ServiceException {
+        private void updateCells(SpreadsheetService service, Map<CreditCardEnum,CreditCardBillItem> dtos,URL cellFeedUrl) throws IOException, ServiceException {
             
-            for (Map.Entry<CreditCardEnum,CreditCardItem> entry : dtos.entrySet()) {
+            for (Map.Entry<CreditCardEnum,CreditCardBillItem> entry : dtos.entrySet()) {
                 
                 //TODO DESACOPLAR ESTO!
                 String creditCardName = entry.getValue().getCreditCardName();
@@ -149,4 +149,8 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             return cellFeed.getEntries().get(0);
         }
 
+        @Override
+        public void exportRecentExpenditure() {
+            
+        }
 }

@@ -12,7 +12,8 @@ import ar.com.gl.paystadistics.parser.ICreditCardItemHtmlParser;
  * @author n.gonzalez
  *
  */
-@Data public abstract class CreditCardItem {
+@Data
+public abstract class CreditCardBillItem {
 
     public static final  String AMEX = "American Express";
 
@@ -21,22 +22,24 @@ import ar.com.gl.paystadistics.parser.ICreditCardItemHtmlParser;
 
     @NonNull
     private String expirationDate;
-  
+    
     @NonNull
     private String amount;
-
-    public CreditCardItem(Message message,ICreditCardItemHtmlParser parser) {
-
-        if (message == null){
+  
+    public CreditCardBillItem(Message message,ICreditCardItemHtmlParser parser) {
+        
+        if (message == null) {
             throw new BusinessException("The message cannot be null");
         }
  
         parseInfo(message,parser);
+        
     }
 
-    abstract void parseInfo(Message message,ICreditCardItemHtmlParser parser) ;
+    abstract void parseInfo(Message message, ICreditCardItemHtmlParser parser) ;
 
-    public boolean isAmex(){
+    public boolean isAmex() {
         return this.creditCardName.contains(AMEX);
     }
+    
 }

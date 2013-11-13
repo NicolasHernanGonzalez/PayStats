@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
-import ar.com.gl.paystadistics.domain.CreditCardItem;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
 import ar.com.gl.paystadistics.services.IEmailingService;
 import ar.com.gl.paystadistics.services.IStatsExporter;
 
@@ -30,7 +30,7 @@ public class PayStatsSystemFacade implements IPayStatsSystemFacade {
     private IStatsExporter statsExporter;
     
     
-    public void exportLastStats(CreditCardEnum[] creditCardKeys) {
+    public void exportLastCreditCardStats(CreditCardEnum[] creditCardKeys) {
         
         log.info("exporting stats for  " + creditCardKeys);
         
@@ -39,7 +39,7 @@ public class PayStatsSystemFacade implements IPayStatsSystemFacade {
         log.info("Stats exported successfully!");
     }
     
-    public void exportLastStats() {
+    public void exportLastCreditCardStats() {
         
         log.info("exporting stats for all configured credit cards...");
         
@@ -48,14 +48,14 @@ public class PayStatsSystemFacade implements IPayStatsSystemFacade {
         log.info("Stats exported successfully!");
     }
     
-    public void exportLastStats(CreditCardEnum creditCardKey) {
+    public void exportLastCreditCardStats(CreditCardEnum creditCardKey) {
         
         log.info("Retrieving info for " + creditCardKey.toString());
         
         CreditCardEnum[] creditCardKeys = new CreditCardEnum[1];
         creditCardKeys[0] = creditCardKey;
         
-        Map<CreditCardEnum,CreditCardItem> stats = emailingService.retrieveEmailLastinfo(creditCardKeys);
+        Map<CreditCardEnum,CreditCardBillItem> stats = emailingService.retrieveEmailLastinfo(creditCardKeys);
         
         log.info("exporting stats");
         
@@ -63,4 +63,9 @@ public class PayStatsSystemFacade implements IPayStatsSystemFacade {
         
         log.info("Stats exported successfully!");
     }
+    
+    public void exportPayCashItem() {
+        
+    }
+
 }

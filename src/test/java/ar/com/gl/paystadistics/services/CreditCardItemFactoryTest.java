@@ -21,9 +21,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
-import ar.com.gl.paystadistics.domain.CreditCardItem;
-import ar.com.gl.paystadistics.domain.SantanderRioCreditCardItem;
-import ar.com.gl.paystadistics.dto.CreditCardItemDTO;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
+import ar.com.gl.paystadistics.domain.SantanderRioCreditCardBillItem;
+import ar.com.gl.paystadistics.dto.CreditCardBillItemDTO;
 import ar.com.gl.paystadistics.parser.ICreditCardItemHtmlParser;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,10 +57,10 @@ public class CreditCardItemFactoryTest {
         
 
         // MUD
-        CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
+        CreditCardBillItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
 
         // Asserts
-        assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
+        assertEquals(creditCarditem instanceof SantanderRioCreditCardBillItem, true);
         assertEquals(creditCarditem.getCreditCardName(), "Tarjeta VISA");
         assertEquals(creditCarditem.getAmount(), "3261.51");
         assertEquals(creditCarditem.getExpirationDate(), "01/10/2013");
@@ -75,10 +75,10 @@ public class CreditCardItemFactoryTest {
         when(message.getContent()).thenReturn(validSantanderRioMailSample1);
     
     //MUD
-        CreditCardItem creditCarditem = creditCardItemFactory.buildSantanderRioCreditCardItem(message);
+        CreditCardBillItem creditCarditem = creditCardItemFactory.buildSantanderRioCreditCardItem(message);
     
     //Asserts
-        assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
+        assertEquals(creditCarditem instanceof SantanderRioCreditCardBillItem, true);
         assertEquals(creditCarditem.getCreditCardName(),"Tarjeta VISA");
         assertEquals(creditCarditem.getAmount(),"3261.51");
         assertEquals(creditCarditem.getExpirationDate(),"01/10/2013");
@@ -93,10 +93,10 @@ public class CreditCardItemFactoryTest {
         when(message.getContent()).thenReturn(validSantanderRioMailSample2);
         
         //MUD
-        CreditCardItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
+        CreditCardBillItem creditCarditem = creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO, message);
         
         //Asserts
-        assertEquals(creditCarditem instanceof SantanderRioCreditCardItem, true);
+        assertEquals(creditCarditem instanceof SantanderRioCreditCardBillItem, true);
         assertEquals(creditCarditem.getCreditCardName(),"Tarjeta American Express");
         assertEquals(creditCarditem.getAmount(),"693.37");
         assertEquals(creditCarditem.getExpirationDate(),"02/10/2013");
@@ -129,7 +129,7 @@ public class CreditCardItemFactoryTest {
         
         ICreditCardItemHtmlParser parser = mock(ICreditCardItemHtmlParser.class);
         
-        when(parser.paseHTML(anyObject().toString())).thenReturn(new CreditCardItemDTO(null, null, null));
+        when(parser.paseHTML(anyObject().toString())).thenReturn(new CreditCardBillItemDTO(null, null, null));
         
         creditCardItemFactory.buildCreditCardItem(CreditCardEnum.VISA_SANTANDER_RIO,message);    
     

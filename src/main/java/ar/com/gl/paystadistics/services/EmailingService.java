@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
-import ar.com.gl.paystadistics.domain.CreditCardItem;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
 import ar.com.gl.paystadistics.dto.CreditCardMailSearchCriteriaDTO;
 import ar.com.gl.paystadistics.exceptions.BusinessException;
 
@@ -80,7 +80,7 @@ public class EmailingService implements IEmailingService {
      * @param creditCardKey
      * @return
      */
-    public Map<CreditCardEnum,CreditCardItem> retrieveEmailLastinfo(CreditCardEnum[] creditCardKeys) {
+    public Map<CreditCardEnum,CreditCardBillItem> retrieveEmailLastinfo(CreditCardEnum[] creditCardKeys) {
         
         Calendar calendar = getCalendar();
         
@@ -109,13 +109,13 @@ public class EmailingService implements IEmailingService {
     /**
      * Adapter to retrieveEmaiIinfo, making possible a easier invocation sign
      */
-    public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum creditCardKey) {
+    public Map<CreditCardEnum,CreditCardBillItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum creditCardKey) {
         return retrieveEmaiIinfo(sinceDate,toDate,buildEnum(creditCardKey));
     }
     
-    public Map<CreditCardEnum,CreditCardItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum[] creditCardKeys) {
+    public Map<CreditCardEnum,CreditCardBillItem> retrieveEmaiIinfo(Date sinceDate, Date toDate, CreditCardEnum[] creditCardKeys) {
          
-        HashMap<CreditCardEnum,CreditCardItem> creditCardItems = new HashMap<CreditCardEnum,CreditCardItem>();
+        HashMap<CreditCardEnum,CreditCardBillItem> creditCardItems = new HashMap<CreditCardEnum,CreditCardBillItem>();
         
             try {
                     Store store = initStore();
@@ -174,7 +174,7 @@ public class EmailingService implements IEmailingService {
     }
     
     @Override
-    public Map<CreditCardEnum, CreditCardItem> retrieveEmailLastinfo(CreditCardEnum creditCardKey) {
+    public Map<CreditCardEnum, CreditCardBillItem> retrieveEmailLastinfo(CreditCardEnum creditCardKey) {
         return retrieveEmailLastinfo(buildEnum(creditCardKey));
     }
 

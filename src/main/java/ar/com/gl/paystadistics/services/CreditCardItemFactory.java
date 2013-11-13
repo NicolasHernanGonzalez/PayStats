@@ -10,8 +10,8 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 
 import ar.com.gl.paystadistics.domain.CreditCardEnum;
-import ar.com.gl.paystadistics.domain.CreditCardItem;
-import ar.com.gl.paystadistics.domain.SantanderRioCreditCardItem;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
+import ar.com.gl.paystadistics.domain.SantanderRioCreditCardBillItem;
 
 @Component
 @Log4j
@@ -21,18 +21,18 @@ public class CreditCardItemFactory {
     private Map<CreditCardEnum,ICreditCardItemFactory> creditCardsItemFactories;
     
     
-    public CreditCardItem buildCreditCardItem(CreditCardEnum creditCardKey,Message message) {
+    public CreditCardBillItem buildCreditCardItem(CreditCardEnum creditCardKey,Message message) {
         
         log.debug("Choosing apropiate factory to build a CreditCardItem...");
         
         return creditCardsItemFactories.get(creditCardKey).buildCreditCardItem(message);
     }
     
-    public CreditCardItem buildSantanderRioCreditCardItem(Message message) {
+    public CreditCardBillItem buildSantanderRioCreditCardItem(Message message) {
         
         log.info("Building SantanderRioItem...");
         
-        CreditCardItem item = new SantanderRioCreditCardItem(message);
+        CreditCardBillItem item = new SantanderRioCreditCardBillItem(message);
         
         log.debug("Build Success");
         

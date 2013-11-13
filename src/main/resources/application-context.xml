@@ -30,7 +30,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
  			</list>
 		</property>
 	</bean>
-
+	
 	<bean id="SantanderRioFactory" class="ar.com.gl.paystadistics.services.SantanderRioItemFactory"/>
     	
 	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"/>
@@ -54,6 +54,9 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 		<entry key="VISA_SANTANDER_RIO" value-ref="SantanderRioVisa"/>
 		<entry key="AMEX_SANTANDER_RIO" value-ref="SantanderRioAmex"/>
 	</util:map>
+	
+	
+<!-- 	Quartz Stuff     -->
 	
 	
 	<bean id="SantanderRioExportStatsJob" class="ar.com.gl.paystadistics.jobs.CreditCardsExportStatsJob"/>
@@ -87,5 +90,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	        </list>
 	    </property>
 	</bean>
+	
+	<!-- 	End Quartz Stuff     -->
 		
 </beans>

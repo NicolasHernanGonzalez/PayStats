@@ -10,7 +10,7 @@ public class BusinessExceptionMapper implements ExceptionMapper<ar.com.gl.paysta
 
     @Override
     public Response toResponse(BusinessException e) {
-	return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
 
 }

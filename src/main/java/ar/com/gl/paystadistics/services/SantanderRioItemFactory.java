@@ -6,8 +6,8 @@ import lombok.extern.log4j.Log4j;
 
 import org.springframework.stereotype.Component;
 
-import ar.com.gl.paystadistics.domain.CreditCardItem;
-import ar.com.gl.paystadistics.domain.SantanderRioCreditCardItem;
+import ar.com.gl.paystadistics.domain.CreditCardBillItem;
+import ar.com.gl.paystadistics.domain.SantanderRioCreditCardBillItem;
 
 /**
  * 'Santander Rio' implementation of <code>ICreditCardItemFactory</code> that knows how to build a <code>CreditCardItem</codes> 
@@ -23,11 +23,11 @@ public class SantanderRioItemFactory implements ICreditCardItemFactory {
      * @inherited
      */
     @Override
-    public CreditCardItem buildCreditCardItem(Message message) {
+    public CreditCardBillItem buildCreditCardItem(Message message) {
         
         log.info("Building SantanderRioItem...");
         
-        CreditCardItem item = new SantanderRioCreditCardItem(message);
+        CreditCardBillItem item = new SantanderRioCreditCardBillItem(message);
         
         log.debug("Build Success");
         

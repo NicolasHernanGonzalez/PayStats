@@ -24,7 +24,7 @@ public class CreditCardsExportStatsJob extends QuartzJobBean {
         
         log.info("Job stating to run...");
         
-        this.payStatsSystemFacade.exportLastStats((creditCardKeys.toArray(new CreditCardEnum[creditCardKeys.size()])));
+        this.payStatsSystemFacade.exportLastCreditCardStats((creditCardKeys.toArray(new CreditCardEnum[creditCardKeys.size()])));
         
         log.info("Successfull!");
     }

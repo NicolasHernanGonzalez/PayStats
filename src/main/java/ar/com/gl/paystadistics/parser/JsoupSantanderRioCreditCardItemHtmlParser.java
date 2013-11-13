@@ -8,7 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
-import ar.com.gl.paystadistics.dto.CreditCardItemDTO;
+import ar.com.gl.paystadistics.dto.CreditCardBillItemDTO;
 
 /**
  * Jsoup implementation for <code>ICreditCardItemHtmlParser</code> that have the responsibility for interpreting 
@@ -22,7 +22,7 @@ public class JsoupSantanderRioCreditCardItemHtmlParser implements ICreditCardIte
      * @see ar.com.gl.paystadistics.services.ICreditCardItemHtmlParser#paseHTML(java.lang.String)
      */
     @Override
-    public CreditCardItemDTO paseHTML(String htmlMail) {
+    public CreditCardBillItemDTO paseHTML(String htmlMail) {
         
         Document parsedDocument = Jsoup.parse(htmlMail);
 
@@ -39,7 +39,7 @@ public class JsoupSantanderRioCreditCardItemHtmlParser implements ICreditCardIte
 
         amount = amount.replace("$&nbsp;", "").replace(".", "").replace(",", ".");
         
-        return new CreditCardItemDTO(amount,expirationDateNode.toString() , nameNode.toString()); 
+        return new CreditCardBillItemDTO(amount,expirationDateNode.toString() , nameNode.toString()); 
     }
 
 }
