@@ -28,7 +28,7 @@ public class CashItemTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
         
-        CashPayItem cashPayItem = new CashPayItem(PayConceptEnum.DRINK,324.03,calendar.getTime());
+        CashPayItem cashPayItem = new CashPayItem(PayConceptEnum.DRINK,324.03,calendar.getTime(),"Some comment");
         Set<ConstraintViolation<CashPayItem>> constraintViolations = validator.validate( cashPayItem );
 
         assertEquals( 1, constraintViolations.size() );
@@ -40,7 +40,7 @@ public class CashItemTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2013, 10, 11,calendar.get(Calendar.HOUR),calendar.get(Calendar.MINUTE) - 1);
         
-        CashPayItem cashPayItem = new CashPayItem(PayConceptEnum.DRINK,null,calendar.getTime());
+        CashPayItem cashPayItem = new CashPayItem(PayConceptEnum.DRINK,null,calendar.getTime(),"Some comment");
         Set<ConstraintViolation<CashPayItem>> constraintViolations = validator.validate( cashPayItem );
 
         assertEquals( 1, constraintViolations.size() );
@@ -53,7 +53,7 @@ public class CashItemTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2013, 10, 11,calendar.get(Calendar.HOUR),calendar.get(Calendar.MINUTE) - 1);
         
-        CashPayItem cashPayItem = new CashPayItem(null,321.5,calendar.getTime());
+        CashPayItem cashPayItem = new CashPayItem(null,321.5,calendar.getTime(),"Some comment");
         Set<ConstraintViolation<CashPayItem>> constraintViolations = validator.validate( cashPayItem );
 
         assertEquals( 1, constraintViolations.size() );

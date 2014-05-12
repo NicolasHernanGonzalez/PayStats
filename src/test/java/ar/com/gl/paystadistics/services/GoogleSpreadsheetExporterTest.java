@@ -67,7 +67,7 @@ public class GoogleSpreadsheetExporterTest {
 
         Mockito.doCallRealMethod().when(googleSpreadsheetStatsExporter).exportStats(anyMap(), anyString());
         when(googleSpreadsheetStatsExporter.verifyCredentials()).thenReturn(service);
-        when(googleSpreadsheetStatsExporter.getSpreadSheetFeed(any(FeedURLFactory.class), any(SpreadsheetService.class), anyString())).thenReturn(spreadsheetFeed);
+        when(googleSpreadsheetStatsExporter.getSpreadSheetFeed(any(FeedURLFactory.class), anyString())).thenReturn(spreadsheetFeed);
         when(spreadsheetFeed.getEntries()).thenReturn(new ArrayList());
 
         googleSpreadsheetStatsExporter.exportStats(new HashMap<CreditCardEnum, CreditCardBillItem>(), "spreadSheetName");
@@ -160,7 +160,7 @@ public class GoogleSpreadsheetExporterTest {
             acumulador = acumulador + 7000;
         }
         
-        System.out.println("Luego de 1 año. Total : " + acumulador);
+        System.out.println("Luego de 1 aï¿½o. Total : " + acumulador);
     }
  
 }

@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import javax.annotation.PostConstruct;
+
 import lombok.extern.java.Log;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import ar.com.gl.paystadistics.domain.CreditCardEnum;
+import ar.com.gl.paystadistics.domain.CashPayItem;
 import ar.com.gl.paystadistics.domain.CreditCardBillItem;
+import ar.com.gl.paystadistics.domain.CreditCardEnum;
 import ar.com.gl.paystadistics.exceptions.BusinessException;
 
 import com.google.gdata.client.spreadsheet.CellQuery;
@@ -21,6 +24,7 @@ import com.google.gdata.client.spreadsheet.SpreadsheetQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
+import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
@@ -38,23 +42,44 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
     @Value("${google.drive.password}")
     private String googlePass;
     
+    private SpreadsheetService service;
+    
+    @PostConstruct
+    public void postConstructor() throws AuthenticationException {
+    	
+    	log.info("Verifying credentials...");
+    	
+    	service = verifyCredentials();
+    }
+    
     @Override
     public void exportStats(Map<CreditCardEnum, CreditCardBillItem> stats) {
-        log.info("Export stats using google spreasheet implementation");
+        
+    	log.info("Export stats using google spreasheet implementation");
         exportStats(stats,"Personal Business Stuff");
     }
     
-    protected void exportStats(Map<CreditCardEnum,CreditCardBillItem> dtos,String spreadSheetName) {
+    @Override
+	public void exportCashPayment(CashPayItem item,String spreadSheetName) throws IOException, ServiceException {
+    	
+    	SpreadsheetEntry entry = retrieveSpreedSheet(spreadSheetName);
+        
+        URL listFeedUrl = getListFeedUrl(entry);
+        
+        ListEntry row = buildSpreadSheetRows(item);
+		
+		log.log(Level.INFO,"adding spreadsheet rows");
+		row = service.insert(listFeedUrl, row);
+	}
+    
+
+	protected void exportStats(Map<CreditCardEnum,CreditCardBillItem> dtos,String spreadSheetName) {
         
         FeedURLFactory factory = FeedURLFactory.getDefault();
 
         try {
                 
-                log.info("Verifying credentials...");
-                
-                SpreadsheetService service = verifyCredentials();
-            
-                SpreadsheetFeed spreadsheetFeed = getSpreadSheetFeed(factory, service,spreadSheetName);
+                SpreadsheetFeed spreadsheetFeed = getSpreadSheetFeed(factory,spreadSheetName);
             
                 List<SpreadsheetEntry> spreadsheets = spreadsheetFeed.getEntries();
             
@@ -67,9 +92,9 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
                 
                 log.info("Using '" + entry.getTitle().getPlainText() + "' spreadsheet");
                 
-                URL cellFeedUrl = getCellFeedUrl(service, entry);
+                URL cellFeedUrl = getCellFeedUrl(entry);
                 
-                updateCells(service, dtos, cellFeedUrl);
+                updateCells(dtos, cellFeedUrl);
         
             } 
             
@@ -84,7 +109,7 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             }
         }
 
-        private URL getCellFeedUrl(SpreadsheetService service, SpreadsheetEntry entry) throws IOException, ServiceException {
+        private URL getCellFeedUrl(SpreadsheetEntry entry) throws IOException, ServiceException {
             WorksheetFeed worksheetFeed = service.getFeed(entry.getWorksheetFeedUrl(), WorksheetFeed.class);
             List<WorksheetEntry> worksheets = worksheetFeed.getEntries();
             WorksheetEntry worksheet = worksheets.get(0);
@@ -97,7 +122,7 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             return service;
         }
         
-        protected SpreadsheetFeed getSpreadSheetFeed(FeedURLFactory factory, SpreadsheetService service,String spreadSheetName) throws IOException, ServiceException {
+        protected SpreadsheetFeed getSpreadSheetFeed(FeedURLFactory factory,String spreadSheetName) throws IOException, ServiceException {
             SpreadsheetQuery spreadsheetQuery = new SpreadsheetQuery(factory.getSpreadsheetsFeedUrl());
             spreadsheetQuery.setTitleQuery(spreadSheetName);
             spreadsheetQuery.setTitleExact(true);
@@ -105,7 +130,7 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
         }
         
             
-        private void updateCells(SpreadsheetService service, Map<CreditCardEnum,CreditCardBillItem> dtos,URL cellFeedUrl) throws IOException, ServiceException {
+        private void updateCells(Map<CreditCardEnum,CreditCardBillItem> dtos,URL cellFeedUrl) throws IOException, ServiceException {
             
             for (Map.Entry<CreditCardEnum,CreditCardBillItem> entry : dtos.entrySet()) {
                 
@@ -149,8 +174,52 @@ public class GoogleSpreadsheetStatsExporter implements IStatsExporter {
             return cellFeed.getEntries().get(0);
         }
 
-        @Override
-        public void exportRecentExpenditure() {
+        private ListEntry buildSpreadSheetRows(CashPayItem item) {
+			
+			ListEntry row = new ListEntry();
             
-        }
+            log.log(Level.INFO,"Building spreadsheet rows");
+            row.getCustomElements().setValueLocal("Concept",item.getConceptEnum().name());
+			row.getCustomElements().setValueLocal("Amount", item.getAmount().toString());
+			row.getCustomElements().setValueLocal("Date", item.getDate().toString());
+			
+			return row;
+		}
+
+
+		/**
+		 * Get the Google spreed sheet according with the key name parameter,throwing an exception if not exists
+		 * @param spreadSheetName
+		 * @return
+		 * @throws IOException
+		 * @throws ServiceException
+		 */
+		private SpreadsheetEntry retrieveSpreedSheet(String spreadSheetName) throws IOException, ServiceException {
+			
+			FeedURLFactory factory = FeedURLFactory.getDefault();
+
+        	SpreadsheetFeed spreadsheetFeed = getSpreadSheetFeed(factory,spreadSheetName);
+            
+            List<SpreadsheetEntry> spreadsheets = spreadsheetFeed.getEntries();
+        
+            if (spreadsheets.isEmpty()) {
+                log.log(Level.SEVERE,"No spreadsheets with the name : '" + spreadSheetName + "'");
+                throw new BusinessException("Error : No spreadsheets with the name : '" + spreadSheetName + "'");
+            }
+        
+            SpreadsheetEntry entry = spreadsheets.get(0);
+			return entry;
+		}
+        
+        private URL getListFeedUrl(SpreadsheetEntry entry) throws IOException, ServiceException {
+    		
+        	WorksheetFeed worksheetFeed = service.getFeed(entry.getWorksheetFeedUrl(), WorksheetFeed.class);
+    		List<WorksheetEntry> worksheets = worksheetFeed.getEntries();
+    		WorksheetEntry worksheet = worksheets.get(1);
+    		
+    		return worksheet.getListFeedUrl();	
+    	}
+
+
+		
 }

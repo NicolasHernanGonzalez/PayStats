@@ -9,8 +9,8 @@ import lombok.extern.log4j.Log4j;
 
 import org.springframework.stereotype.Component;
 
-import ar.com.gl.paystadistics.domain.CreditCardEnum;
 import ar.com.gl.paystadistics.domain.CreditCardBillItem;
+import ar.com.gl.paystadistics.domain.CreditCardEnum;
 import ar.com.gl.paystadistics.domain.SantanderRioCreditCardBillItem;
 
 @Component

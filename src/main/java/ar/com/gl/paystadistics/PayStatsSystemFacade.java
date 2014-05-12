@@ -1,6 +1,8 @@
 package ar.com.gl.paystadistics;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
 
 import lombok.extern.java.Log;
 
@@ -8,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import ar.com.gl.paystadistics.domain.CreditCardEnum;
+import ar.com.gl.paystadistics.domain.CashPayItem;
 import ar.com.gl.paystadistics.domain.CreditCardBillItem;
+import ar.com.gl.paystadistics.domain.CreditCardEnum;
+import ar.com.gl.paystadistics.exceptions.BusinessException;
 import ar.com.gl.paystadistics.services.IEmailingService;
 import ar.com.gl.paystadistics.services.IStatsExporter;
+
+import com.google.gdata.util.ServiceException;
 
 
 @Qualifier("defaultFacade")
@@ -64,8 +70,18 @@ public class PayStatsSystemFacade implements IPayStatsSystemFacade {
         log.info("Stats exported successfully!");
     }
     
-    public void exportPayCashItem() {
+    public void exportPayCashItem(CashPayItem item) {
         
+    	log.info("Exporting cash payments, into default SpreedSheet...");
+    	
+    	try {
+			
+    		this.statsExporter.exportCashPayment(item,"Personal Business Stuff");
+		} 
+    	  catch (IOException | ServiceException e) {
+    		  log.log(Level.SEVERE,"Error happened during insertion of a new row");
+    		  throw new BusinessException(e.getMessage());
+		} 
     }
 
 }
